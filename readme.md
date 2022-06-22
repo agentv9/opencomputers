@@ -1,0 +1,1 @@
+this is just a shitty script i modified to monitor the storage of power from devices across multiple mods, will be expanding this more woon
