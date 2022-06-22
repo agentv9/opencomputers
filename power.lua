@@ -81,9 +81,9 @@ function getCells()
     for address, name in pairs(IDCell) do
 		countIDCell =  countIDCell + 1
 		if countIDCell > 1 then
-			cellsID[address] = "Draconic Power Orb".." "..countIDCell
+			cellsID[address] = "Mekanism Induction Matrix".." "..countIDCell
 		else
-			cellsID[address] ="Draconic Power Orb"
+			cellsID[address] ="Mekanism Induction Matrix"
 		end	
 	end
 	for address, name in pairs(TEcell) do
