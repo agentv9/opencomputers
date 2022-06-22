@@ -112,7 +112,12 @@ function getTotal()
 	local totalMaxPower = 0	
 	local cellid = getCells()
 	for address, name in pairs(cellid) do
-		local cell = component.proxy( address )
+        if name == "induction_matrix" do
+            local cell = component.proxy( address )
+		totalPower = totalPower + cell.getEnergyStored() * 0.4
+        totalMaxPower = totalMaxPower + cell.getMaxEnergyStored() * 0.4
+        else    
+        local cell = component.proxy( address )
 		totalPower = totalPower + cell.getEnergyStored()
 		totalMaxPower = totalMaxPower + cell.getMaxEnergyStored()
 	end
@@ -132,7 +137,10 @@ while true do
 	local cell = component.proxy( address )
 	count = count + 1
 	local t = count * 3
-	progressBar( name, t , cell.getEnergyStored(), cell.getMaxEnergyStored() , 0x00bb00, true, "RF" )
+    if name == "induction_matrix" do
+	progressBar( name, t , cell.getEnergyStored() * 0.4, cell.getMaxEnergyStored() * 0.4 , 0x00bb00, true, "RF" )
+    else
+        progressBar( name, t , cell.getEnergyStored(), cell.getMaxEnergyStored() , 0x00bb00, true, "RF" )
 	end
 	
 	local totalPower, totalMaxPower = getTotal()
