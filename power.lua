@@ -1,6 +1,3 @@
---[[ this based in code from Nonsanity https://www.youtube.com/user/Nonsanity. mosty using the GUI!
-	The code was edited and changed by jennifer cally "ebony" 
---]]
 
 
 local component = require( "component" )
@@ -47,6 +44,7 @@ function formatBig( value )
     valRem = math.floor( value / 1000 )
     valPart = value - (valRem * 1000)
     if output == "" then
+      valPart = math.ceil(valPart)
       output = string.format( "%03d", valPart )
     elseif valRem == 0 then
       output = valPart .. "," .. output
@@ -112,7 +110,8 @@ function getTotal()
 	local totalMaxPower = 0	
 	local cellid = getCells()
 	for address, name in pairs(cellid) do
-        if name == "induction_matrix" do
+
+        if name == "Mekanism Induction Matrix" then
             local cell = component.proxy( address )
 		totalPower = totalPower + cell.getEnergy() * 0.4
         totalMaxPower = totalMaxPower + cell.getMaxEnergy() * 0.4
@@ -120,6 +119,7 @@ function getTotal()
         local cell = component.proxy( address )
 		totalPower = totalPower + cell.getEnergyStored()
 		totalMaxPower = totalMaxPower + cell.getMaxEnergyStored()
+        end
 	end
 	return totalPower, totalMaxPower
 
@@ -137,10 +137,12 @@ while true do
 	local cell = component.proxy( address )
 	count = count + 1
 	local t = count * 3
-    if name == "induction_matrix" do
-	progressBar( name, t , cell.getEnergyStored() * 0.4, cell.getMaxEnergyStored() * 0.4 , 0x00bb00, true, "RF" )
+
+    if name == "Mekanism Induction Matrix" then
+	progressBar( name, t , cell.getEnergy() * 0.4, cell.getMaxEnergy() * 0.4, 0x00bb00, true, "RF" )
     else
         progressBar( name, t , cell.getEnergyStored(), cell.getMaxEnergyStored() , 0x00bb00, true, "RF" )
+    end
 	end
 	
 	local totalPower, totalMaxPower = getTotal()
