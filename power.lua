@@ -114,8 +114,8 @@ function getTotal()
 	for address, name in pairs(cellid) do
         if name == "induction_matrix" do
             local cell = component.proxy( address )
-		totalPower = totalPower + cell.getEnergyStored() * 0.4
-        totalMaxPower = totalMaxPower + cell.getMaxEnergyStored() * 0.4
+		totalPower = totalPower + cell.getEnergy() * 0.4
+        totalMaxPower = totalMaxPower + cell.getMaxEnergy() * 0.4
         else    
         local cell = component.proxy( address )
 		totalPower = totalPower + cell.getEnergyStored()
