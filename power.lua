@@ -29,7 +29,7 @@ function progressBar( label, y, value, maxVal, color, show, unit )
   gpu.fill( 3, y+1, w, 1, " " )
   gpu.setBackground( oldColor, false )
   if show then
-    local valStr = formatBig( value ) .. unit
+    local valStr = formatBig( value ) .. " / " .. formatBig(maxVal) .. unit
     local n = string.len( valStr )
     gpu.set( 158 - n, y, valStr )
   end
