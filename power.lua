@@ -26,15 +26,36 @@ function progressBar( label, y, value, maxVal, color, show, unit )
   gpu.setBackground( 0x222222, false )
   gpu.fill( 3, y+1, 155, 1, " " )
   gpu.setBackground( color, false )
-  gpu.fill( 3, y+1, w, 1, " " )\
+  gpu.fill( 3, y+1, w, 1, " " )
   gpu.setBackground( oldColor, false )
   if show then
-    local valStr = formatBig( value ) .. " / " .. formatBig(maxVal) .. unit
+    local valStr = formatBig( value ) .. unit.." / " .. formatBig(maxVal) .. unit
     local n = string.len( valStr )
     gpu.set( 158 - n, y, valStr )
   end
 end
  
+function progressBar2( label, y, value, maxVal, producing, color, show, unit )
+	local oldColor = gpu.getBackground( false )
+	gpu.setBackground(0x000000, false)
+	gpu.fill( 3, y, 155, 2, " " )
+	w = math.floor( value * (155 / maxVal) )
+	p = math.floor( (w / 155) * 100 )
+	gpu.set( 3, y, label )
+	gpu.setBackground( 0x222222, false )
+	gpu.fill( 3, y+1, 155, 1, " " )
+	gpu.setBackground( color, false )
+	gpu.fill( 3, y+1, w, 1, " " )
+	gpu.setBackground( oldColor, false )
+	if show then
+	  local valStr = "Producing: ".. formatBig(producing).. unit.."/t"
+
+	  local n = string.len( valStr )
+	  gpu.set( 158 - n, y, valStr )
+	end
+  end
+
+
  
 function formatBig( value )
   local output = ""
@@ -61,11 +82,14 @@ function getCells()
 	local countTEcell = 0
 	local countRfTCell = 0
 	local countIDCell = 0
+	local countMKreactor = 0
+	
 
-	local TEcell = component.list( "energy_device" )
 	local DcOrb = component.list("draconic_rf_storage")
 	local RfTCell = component.list("rftools_powercell")
 	local IDCell = component.list("induction_matrix")
+
+	local MKreactor = component.list("reactor_logic_adapter")
 
 	local cellsID = {}	
 	for address, name in pairs(DcOrb) do
@@ -76,6 +100,14 @@ function getCells()
 			cellsID[address] ="Draconic Power Orb"
 		end	
 	end
+	for address, name in pairs(MKreactor) do
+		countMKreactor =  countMKreactor + 1
+		if countMKreactor > 1 then
+			cellsID[address] = "Mekanism Fusion Reactor".." "..countMKreactor
+		else
+			cellsID[address] ="Mekanism Fusion Reactor"
+		end	
+	end
     for address, name in pairs(IDCell) do
 		countIDCell =  countIDCell + 1
 		if countIDCell > 1 then
@@ -84,15 +116,7 @@ function getCells()
 			cellsID[address] ="Mekanism Induction Matrix"
 		end	
 	end
-	for address, name in pairs(TEcell) do
-		countTEcell =  countTEcell + 1
-
-		if countTEcell > 1 then
-			cellsID[address] = "Thermal Expansion Power Cell".." "..countTEcell
-		else
-			cellsID[address] = "Thermal Expansion Power Cell"
-		end
-	end
+	
 	for address, name in pairs(RfTCell) do
 		countRfTCell = countRfTCell + 1
 
@@ -115,7 +139,11 @@ function getTotal()
             local cell = component.proxy( address )
 		totalPower = totalPower + cell.getEnergy() * 0.4
         totalMaxPower = totalMaxPower + cell.getMaxEnergy() * 0.4
-        else    
+        elseif name == "Mekanism Fusion Reactor" then
+            local cell = component.proxy( address )
+		totalPower = totalPower + cell.getEnergy() * 0.4
+        totalMaxPower = totalMaxPower + cell.getMaxEnergy() * 0.4
+        else 
         local cell = component.proxy( address )
 		totalPower = totalPower + cell.getEnergyStored()
 		totalMaxPower = totalMaxPower + cell.getMaxEnergyStored()
@@ -140,7 +168,9 @@ while true do
 
     if name == "Mekanism Induction Matrix" then
 	progressBar( name, t , cell.getEnergy() * 0.4, cell.getMaxEnergy() * 0.4, 0x00bb00, true, "RF" )
-    else
+    elseif name == "Mekanism Fusion Reactor" then
+		progressBar2( name, 40 - count , cell.getEnergy() * 0.4, cell.getMaxEnergy() * 0.4,cell.getProducing() * 0.4,  0x00bb00, true, "RF" )
+		else
         progressBar( name, t , cell.getEnergyStored(), cell.getMaxEnergyStored() , 0x00bb00, true, "RF" )
     end
 	end
